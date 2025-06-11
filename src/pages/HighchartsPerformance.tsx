@@ -22,6 +22,41 @@ type ChartType = {
   price: 'line' | 'spline' | 'column';
 };
 
+// Enhanced Sub-Zone Data Types
+export type SubZone = {
+  id: string;
+  name: string;
+  nameAr: string;
+  parentZone: 'North Riyadh' | 'South Riyadh' | 'East Riyadh' | 'West Riyadh' | 'Central Riyadh';
+  salesData: number[]; // 6 months of sales data in SAR millions
+  priceData: number[]; // 6 months of average price data in SAR
+  population?: number;
+  area?: number; // in km²
+};
+
+export type SubZonePerformance = {
+  subZone: SubZone;
+  totalSales: number;
+  avgPrice: number;
+  percentageContribution: number;
+  trend: 'up' | 'down' | 'stable';
+};
+
+export type ZoneSubZoneData = {
+  zoneName: string;
+  zoneNameAr: string;
+  subZones: SubZone[];
+  top10: SubZonePerformance[];
+  others: {
+    totalSales: number;
+    avgPrice: number;
+    percentageContribution: number;
+    count: number;
+  };
+  totalZoneSales: number;
+  avgZonePrice: number;
+};
+
 type SalesData = {
   month: string;
   northRiyadh: number;
@@ -59,6 +94,11 @@ const HighchartsPerformance: React.FC = () => {
   const [isSalesModalOpen, setIsSalesModalOpen] = useState(false);
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
 
+  // Enhanced modal state for sub-zone functionality
+  const [selectedZone, setSelectedZone] = useState<string | null>(null);
+  const [isLoadingModalData, setIsLoadingModalData] = useState(false);
+  const [zoneSubZoneData, setZoneSubZoneData] = useState<ZoneSubZoneData | null>(null);
+
   // Sample data - in real app, this would come from API
   const salesData: SalesData[] = [
     { month: 'Jan', northRiyadh: 1200000, southRiyadh: 980000, eastRiyadh: 850000, westRiyadh: 750000, centralRiyadh: 920000, total: 4700000 },
@@ -77,6 +117,153 @@ const HighchartsPerformance: React.FC = () => {
     { month: 'May', northRiyadh: 4.85, southRiyadh: 4.65, eastRiyadh: 4.55, westRiyadh: 4.45, centralRiyadh: 4.95 },
     { month: 'Jun', northRiyadh: 5.10, southRiyadh: 4.90, eastRiyadh: 4.80, westRiyadh: 4.70, centralRiyadh: 5.20 }
   ];
+
+  // Realistic Saudi Arabian district names and data for each zone
+  const SUB_ZONES_DATA: Record<string, SubZone[]> = {
+    'North Riyadh': [
+      { id: 'nr001', name: 'Al Sahafa', nameAr: 'الصحافة', parentZone: 'North Riyadh', salesData: [0.15, 0.17, 0.14, 0.18, 0.16, 0.19], priceData: [4.8, 5.0, 4.9, 5.2, 5.1, 5.4], population: 85000, area: 12.5 },
+      { id: 'nr002', name: 'Al Nafal', nameAr: 'النفل', parentZone: 'North Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.6, 4.8, 4.7, 5.0, 4.9, 5.2], population: 72000, area: 8.3 },
+      { id: 'nr003', name: 'Al Yasmin', nameAr: 'الياسمين', parentZone: 'North Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.7, 4.9, 4.8, 5.1, 5.0, 5.3], population: 68000, area: 15.2 },
+      { id: 'nr004', name: 'Al Rawda', nameAr: 'الروضة', parentZone: 'North Riyadh', salesData: [0.18, 0.20, 0.17, 0.21, 0.19, 0.22], priceData: [5.0, 5.2, 5.1, 5.4, 5.3, 5.6], population: 95000, area: 18.7 },
+      { id: 'nr005', name: 'Al Ghadir', nameAr: 'الغدير', parentZone: 'North Riyadh', salesData: [0.09, 0.11, 0.08, 0.12, 0.10, 0.13], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 54000, area: 9.8 },
+      { id: 'nr006', name: 'Al Muhammadiyah', nameAr: 'المحمدية', parentZone: 'North Riyadh', salesData: [0.14, 0.16, 0.13, 0.17, 0.15, 0.18], priceData: [4.7, 4.9, 4.8, 5.1, 5.0, 5.3], population: 78000, area: 14.1 },
+      { id: 'nr007', name: 'Al Nada', nameAr: 'الندى', parentZone: 'North Riyadh', salesData: [0.10, 0.12, 0.09, 0.13, 0.11, 0.14], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 61000, area: 11.6 },
+      { id: 'nr008', name: 'Al Olaya', nameAr: 'العليا', parentZone: 'North Riyadh', salesData: [0.16, 0.18, 0.15, 0.19, 0.17, 0.20], priceData: [4.9, 5.1, 5.0, 5.3, 5.2, 5.5], population: 89000, area: 16.4 },
+      { id: 'nr009', name: 'Al Wurud', nameAr: 'الورود', parentZone: 'North Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.6, 4.8, 4.7, 5.0, 4.9, 5.2], population: 71000, area: 13.2 },
+      { id: 'nr010', name: 'King Fahd District', nameAr: 'حي الملك فهد', parentZone: 'North Riyadh', salesData: [0.17, 0.19, 0.16, 0.20, 0.18, 0.21], priceData: [5.1, 5.3, 5.2, 5.5, 5.4, 5.7], population: 82000, area: 19.5 },
+      { id: 'nr011', name: 'Al Hamra', nameAr: 'الحمراء', parentZone: 'North Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.6, 4.8, 4.7, 5.0, 4.9, 5.2], population: 66000, area: 10.8 },
+      { id: 'nr012', name: 'Al Aziziyah', nameAr: 'العزيزية', parentZone: 'North Riyadh', salesData: [0.08, 0.10, 0.07, 0.11, 0.09, 0.12], priceData: [4.3, 4.5, 4.4, 4.7, 4.6, 4.9], population: 58000, area: 8.9 }
+    ],
+    
+    'South Riyadh': [
+      { id: 'sr001', name: 'Al Manakh', nameAr: 'المناخ', parentZone: 'South Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.3, 4.5, 4.4, 4.7, 4.6, 4.9], population: 67000, area: 11.3 },
+      { id: 'sr002', name: 'Al Difa', nameAr: 'الضباط', parentZone: 'South Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 74000, area: 13.7 },
+      { id: 'sr003', name: 'Al Khaleej', nameAr: 'الخليج', parentZone: 'South Riyadh', salesData: [0.14, 0.16, 0.13, 0.17, 0.15, 0.18], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 81000, area: 15.1 },
+      { id: 'sr004', name: 'Al Dar Al Baida', nameAr: 'الدار البيضاء', parentZone: 'South Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 69000, area: 12.4 },
+      { id: 'sr005', name: 'Al Naeem', nameAr: 'النعيم', parentZone: 'South Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 76000, area: 14.8 },
+      { id: 'sr006', name: 'Al Faisaliyah', nameAr: 'الفيصلية', parentZone: 'South Riyadh', salesData: [0.10, 0.12, 0.09, 0.13, 0.11, 0.14], priceData: [4.2, 4.4, 4.3, 4.6, 4.5, 4.8], population: 63000, area: 9.6 },
+      { id: 'sr007', name: 'Al Amal', nameAr: 'الأمل', parentZone: 'South Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 72000, area: 13.2 },
+      { id: 'sr008', name: 'Al Tuwaiq', nameAr: 'طويق', parentZone: 'South Riyadh', salesData: [0.15, 0.17, 0.14, 0.18, 0.16, 0.19], priceData: [4.6, 4.8, 4.7, 5.0, 4.9, 5.2], population: 85000, area: 16.9 },
+      { id: 'sr009', name: 'Al Hada', nameAr: 'الهدا', parentZone: 'South Riyadh', salesData: [0.09, 0.11, 0.08, 0.12, 0.10, 0.13], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 58000, area: 10.2 },
+      { id: 'sr010', name: 'Al Riyan', nameAr: 'الريان', parentZone: 'South Riyadh', salesData: [0.14, 0.16, 0.13, 0.17, 0.15, 0.18], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 79000, area: 14.5 },
+      { id: 'sr011', name: 'Al Andalus', nameAr: 'الأندلس', parentZone: 'South Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 71000, area: 12.8 },
+      { id: 'sr012', name: 'Al Salam', nameAr: 'السلام', parentZone: 'South Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.3, 4.5, 4.4, 4.7, 4.6, 4.9], population: 64000, area: 11.1 }
+    ],
+    
+    'East Riyadh': [
+      { id: 'er001', name: 'Al Khalidiyah', nameAr: 'الخالدية', parentZone: 'East Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.2, 4.4, 4.3, 4.6, 4.5, 4.8], population: 73000, area: 12.6 },
+      { id: 'er002', name: 'Al Naseem', nameAr: 'النسيم', parentZone: 'East Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 68000, area: 11.4 },
+      { id: 'er003', name: 'Al Badiah', nameAr: 'البادية', parentZone: 'East Riyadh', salesData: [0.14, 0.16, 0.13, 0.17, 0.15, 0.18], priceData: [4.3, 4.5, 4.4, 4.7, 4.6, 4.9], population: 82000, area: 15.3 },
+      { id: 'er004', name: 'Al Rabia', nameAr: 'الربيع', parentZone: 'East Riyadh', salesData: [0.09, 0.11, 0.08, 0.12, 0.10, 0.13], priceData: [4.0, 4.2, 4.1, 4.4, 4.3, 4.6], population: 59000, area: 9.8 },
+      { id: 'er005', name: 'Al Rahmaniyah', nameAr: 'الرحمانية', parentZone: 'East Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.2, 4.4, 4.3, 4.6, 4.5, 4.8], population: 75000, area: 13.9 },
+      { id: 'er006', name: 'Al Mahdiyah', nameAr: 'المهدية', parentZone: 'East Riyadh', salesData: [0.10, 0.12, 0.09, 0.13, 0.11, 0.14], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 64000, area: 10.7 },
+      { id: 'er007', name: 'Al Taawun', nameAr: 'التعاون', parentZone: 'East Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.2, 4.4, 4.3, 4.6, 4.5, 4.8], population: 78000, area: 14.2 },
+      { id: 'er008', name: 'Al Jarradiyah', nameAr: 'الجرادية', parentZone: 'East Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 66000, area: 11.8 },
+      { id: 'er009', name: 'Al Qadsia', nameAr: 'القادسية', parentZone: 'East Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.2, 4.4, 4.3, 4.6, 4.5, 4.8], population: 71000, area: 13.1 },
+      { id: 'er010', name: 'Al Khuzama', nameAr: 'الخزامى', parentZone: 'East Riyadh', salesData: [0.10, 0.12, 0.09, 0.13, 0.11, 0.14], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 62000, area: 10.4 },
+      { id: 'er011', name: 'Al Dhubbat', nameAr: 'الضباط', parentZone: 'East Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 69000, area: 12.3 },
+      { id: 'er012', name: 'Al Safarat', nameAr: 'السفارات', parentZone: 'East Riyadh', salesData: [0.14, 0.16, 0.13, 0.17, 0.15, 0.18], priceData: [4.3, 4.5, 4.4, 4.7, 4.6, 4.9], population: 84000, area: 16.7 }
+    ],
+    
+    'West Riyadh': [
+      { id: 'wr001', name: 'Al Shifa', nameAr: 'الشفا', parentZone: 'West Riyadh', salesData: [0.09, 0.11, 0.08, 0.12, 0.10, 0.13], priceData: [4.0, 4.2, 4.1, 4.4, 4.3, 4.6], population: 61000, area: 10.5 },
+      { id: 'wr002', name: 'Al Diriyah', nameAr: 'الدرعية', parentZone: 'West Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.2, 4.4, 4.3, 4.6, 4.5, 4.8], population: 78000, area: 14.8 },
+      { id: 'wr003', name: 'Al Shuhada', nameAr: 'الشهداء', parentZone: 'West Riyadh', salesData: [0.10, 0.12, 0.09, 0.13, 0.11, 0.14], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 65000, area: 11.9 },
+      { id: 'wr004', name: 'Al Jawhara', nameAr: 'الجوهرة', parentZone: 'West Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 72000, area: 13.4 },
+      { id: 'wr005', name: 'Al Rabwah', nameAr: 'الربوة', parentZone: 'West Riyadh', salesData: [0.08, 0.10, 0.07, 0.11, 0.09, 0.12], priceData: [3.9, 4.1, 4.0, 4.3, 4.2, 4.5], population: 58000, area: 9.7 },
+      { id: 'wr006', name: 'Al Siteen', nameAr: 'الستين', parentZone: 'West Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 74000, area: 12.8 },
+      { id: 'wr007', name: 'Al Irqah', nameAr: 'العرقة', parentZone: 'West Riyadh', salesData: [0.10, 0.12, 0.09, 0.13, 0.11, 0.14], priceData: [4.0, 4.2, 4.1, 4.4, 4.3, 4.6], population: 67000, area: 11.6 },
+      { id: 'wr008', name: 'Al Suwaidi', nameAr: 'السويدي', parentZone: 'West Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.2, 4.4, 4.3, 4.6, 4.5, 4.8], population: 80000, area: 15.2 },
+      { id: 'wr009', name: 'Al Washm', nameAr: 'الوشم', parentZone: 'West Riyadh', salesData: [0.09, 0.11, 0.08, 0.12, 0.10, 0.13], priceData: [4.0, 4.2, 4.1, 4.4, 4.3, 4.6], population: 63000, area: 10.8 },
+      { id: 'wr010', name: 'Al Izdihar', nameAr: 'الازدهار', parentZone: 'West Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.1, 4.3, 4.2, 4.5, 4.4, 4.7], population: 76000, area: 13.7 },
+      { id: 'wr011', name: 'Al Khair', nameAr: 'الخير', parentZone: 'West Riyadh', salesData: [0.09, 0.11, 0.08, 0.12, 0.10, 0.13], priceData: [4.0, 4.2, 4.1, 4.4, 4.3, 4.6], population: 59000, area: 9.9 },
+      { id: 'wr012', name: 'Al Wadi', nameAr: 'الوادي', parentZone: 'West Riyadh', salesData: [0.10, 0.12, 0.09, 0.13, 0.11, 0.14], priceData: [4.0, 4.2, 4.1, 4.4, 4.3, 4.6], population: 68000, area: 12.1 }
+    ],
+    
+    'Central Riyadh': [
+      { id: 'cr001', name: 'Al Malaz', nameAr: 'الملز', parentZone: 'Central Riyadh', salesData: [0.16, 0.18, 0.15, 0.19, 0.17, 0.20], priceData: [4.6, 4.8, 4.7, 5.0, 4.9, 5.2], population: 95000, area: 18.3 },
+      { id: 'cr002', name: 'Al Batha', nameAr: 'البطحاء', parentZone: 'Central Riyadh', salesData: [0.15, 0.17, 0.14, 0.18, 0.16, 0.19], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 87000, area: 16.1 },
+      { id: 'cr003', name: 'Al Fouta', nameAr: 'الفوطة', parentZone: 'Central Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 72000, area: 13.5 },
+      { id: 'cr004', name: 'Al Margab', nameAr: 'المرقب', parentZone: 'Central Riyadh', salesData: [0.14, 0.16, 0.13, 0.17, 0.15, 0.18], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 84000, area: 15.7 },
+      { id: 'cr005', name: 'Al Dirah', nameAr: 'الديرة', parentZone: 'Central Riyadh', salesData: [0.15, 0.17, 0.14, 0.18, 0.16, 0.19], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 91000, area: 17.2 },
+      { id: 'cr006', name: 'Al Murabba', nameAr: 'المربع', parentZone: 'Central Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 78000, area: 14.6 },
+      { id: 'cr007', name: 'Al Manfuhah', nameAr: 'المنفوحة', parentZone: 'Central Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.3, 4.5, 4.4, 4.7, 4.6, 4.9], population: 69000, area: 12.8 },
+      { id: 'cr008', name: 'King Abdul Aziz', nameAr: 'الملك عبدالعزيز', parentZone: 'Central Riyadh', salesData: [0.15, 0.17, 0.14, 0.18, 0.16, 0.19], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 88000, area: 16.9 },
+      { id: 'cr009', name: 'Al Ambassadors', nameAr: 'السفراء', parentZone: 'Central Riyadh', salesData: [0.13, 0.15, 0.12, 0.16, 0.14, 0.17], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 75000, area: 14.1 },
+      { id: 'cr010', name: 'Al Maidan', nameAr: 'الميدان', parentZone: 'Central Riyadh', salesData: [0.14, 0.16, 0.13, 0.17, 0.15, 0.18], priceData: [4.5, 4.7, 4.6, 4.9, 4.8, 5.1], population: 81000, area: 15.4 },
+      { id: 'cr011', name: 'Al Sulaimaniyah', nameAr: 'السليمانية', parentZone: 'Central Riyadh', salesData: [0.12, 0.14, 0.11, 0.15, 0.13, 0.16], priceData: [4.4, 4.6, 4.5, 4.8, 4.7, 5.0], population: 73000, area: 13.2 },
+      { id: 'cr012', name: 'Al Ministerial', nameAr: 'الوزارات', parentZone: 'Central Riyadh', salesData: [0.11, 0.13, 0.10, 0.14, 0.12, 0.15], priceData: [4.3, 4.5, 4.4, 4.7, 4.6, 4.9], population: 66000, area: 11.8 }
+    ]
+  };
+
+  // Generate complete zone data with top 10 and others calculation
+  const generateZoneSubZoneData = (zoneName: string): ZoneSubZoneData => {
+    const zoneNameMapping: Record<string, string> = {
+      'North Riyadh': 'شمال الرياض',
+      'South Riyadh': 'جنوب الرياض', 
+      'East Riyadh': 'شرق الرياض',
+      'West Riyadh': 'غرب الرياض',
+      'Central Riyadh': 'وسط الرياض'
+    };
+    
+    const subZones = SUB_ZONES_DATA[zoneName] || [];
+    
+    // Calculate total zone sales
+    const totalZoneSales = subZones.reduce((sum, subZone) => 
+      sum + subZone.salesData.reduce((subSum, val) => subSum + val, 0), 0
+    );
+    
+    // Calculate performance for each sub-zone
+    const performances: SubZonePerformance[] = subZones.map(subZone => {
+      const totalSales = subZone.salesData.reduce((sum, val) => sum + val, 0);
+      const avgPrice = subZone.priceData.reduce((sum, val) => sum + val, 0) / subZone.priceData.length;
+      const percentageContribution = (totalSales / totalZoneSales) * 100;
+      
+      // Calculate trend based on first 3 vs last 3 months
+      const firstHalf = subZone.salesData.slice(0, 3).reduce((sum, val) => sum + val, 0) / 3;
+      const secondHalf = subZone.salesData.slice(3, 6).reduce((sum, val) => sum + val, 0) / 3;
+      const trendRatio = secondHalf / firstHalf;
+      
+      let trend: 'up' | 'down' | 'stable' = 'stable';
+      if (trendRatio > 1.05) trend = 'up';
+      else if (trendRatio < 0.95) trend = 'down';
+      
+      return {
+        subZone,
+        totalSales,
+        avgPrice,
+        percentageContribution,
+        trend
+      };
+    });
+    
+    // Sort by total sales and get top 10
+    const sortedPerformances = performances.sort((a, b) => b.totalSales - a.totalSales);
+    const top10 = sortedPerformances.slice(0, 10);
+    const othersData = sortedPerformances.slice(10);
+    
+    // Calculate "Others" aggregated data
+    const others = {
+      totalSales: othersData.reduce((sum, perf) => sum + perf.totalSales, 0),
+      avgPrice: othersData.length > 0 
+        ? othersData.reduce((sum, perf) => sum + perf.avgPrice, 0) / othersData.length 
+        : 0,
+      percentageContribution: othersData.reduce((sum, perf) => sum + perf.percentageContribution, 0),
+      count: othersData.length
+    };
+    
+    const avgZonePrice = performances.reduce((sum, perf) => sum + perf.avgPrice, 0) / performances.length;
+    
+    return {
+      zoneName,
+      zoneNameAr: zoneNameMapping[zoneName] || zoneName,
+      subZones,
+      top10,
+      others,
+      totalZoneSales,
+      avgZonePrice
+    };
+  };
 
   // Brand options
   const brandOptions: Brand[] = ["All", "Coca-Cola", "Pepsi", "Local Brands", "Premium Brands"];
@@ -119,6 +306,39 @@ const HighchartsPerformance: React.FC = () => {
     } catch (error) {
       console.error("Error opening AI tray:", error);
       toast.error(t('common.ai_error'));
+    }
+  };
+
+  // Enhanced chart click handlers for zone detection
+  const handleSalesChartClick = async (event: any) => {
+    if (event && event.point && event.point.series) {
+      const zoneName = event.point.series.name;
+      setIsLoadingModalData(true);
+      setSelectedZone(zoneName);
+      
+      // Simulate data loading with realistic delay
+      setTimeout(() => {
+        const data = generateZoneSubZoneData(zoneName);
+        setZoneSubZoneData(data);
+        setIsLoadingModalData(false);
+        setIsSalesModalOpen(true);
+      }, 800);
+    }
+  };
+
+  const handlePriceChartClick = async (event: any) => {
+    if (event && event.point && event.point.series) {
+      const zoneName = event.point.series.name;
+      setIsLoadingModalData(true);
+      setSelectedZone(zoneName);
+      
+      // Simulate data loading with realistic delay
+      setTimeout(() => {
+        const data = generateZoneSubZoneData(zoneName);
+        setZoneSubZoneData(data);
+        setIsLoadingModalData(false);
+        setIsPriceModalOpen(true);
+      }, 800);
     }
   };
 
@@ -361,7 +581,7 @@ const HighchartsPerformance: React.FC = () => {
                   series: {
                     cursor: 'pointer',
                     events: {
-                      click: () => setIsSalesModalOpen(true)
+                      click: handleSalesChartClick
                     }
                   }
                 },
@@ -487,7 +707,7 @@ const HighchartsPerformance: React.FC = () => {
                   series: {
                     cursor: 'pointer',
                     events: {
-                      click: () => setIsPriceModalOpen(true)
+                      click: handlePriceChartClick
                     }
                   }
                 },
@@ -561,6 +781,166 @@ const HighchartsPerformance: React.FC = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Enhanced Sales Detail Modal */}
+      <Dialog open={isSalesModalOpen} onOpenChange={setIsSalesModalOpen}>
+        <DialogContent className="max-w-6xl h-[80vh] flex flex-col animate-in fade-in-0 zoom-in-95 duration-300">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">
+                  {t('performance.highcharts.modals.sales_detail.title')} - {selectedZone}
+                </h3>
+                {zoneSubZoneData && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Top 10 Performers • {zoneSubZoneData.others.count} Others
+                  </p>
+                )}
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          
+          {isLoadingModalData ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p className="text-gray-600">{t('common.loading')}...</p>
+              </div>
+            </div>
+          ) : zoneSubZoneData ? (
+            <div className="flex-1 overflow-auto space-y-6 p-2">
+              {/* Zone Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800">{t('common.total_sales')}</h4>
+                  <p className="text-2xl font-bold text-blue-900">
+                    {(zoneSubZoneData.totalZoneSales).toFixed(1)}M SAR
+                  </p>
+                </div>
+                <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800">Average Price</h4>
+                  <p className="text-2xl font-bold text-green-900">
+                    {zoneSubZoneData.avgZonePrice.toFixed(2)} SAR
+                  </p>
+                </div>
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                  <h4 className="font-semibold text-purple-800">Sub-Zones</h4>
+                  <p className="text-2xl font-bold text-purple-900">
+                    {zoneSubZoneData.subZones.length}
+                  </p>
+                </div>
+              </div>
+
+              {/* Top 10 Sub-Zones Table */}
+              <div className="bg-white rounded-lg border">
+                <div className="p-4 border-b bg-gray-50 rounded-t-lg">
+                  <h4 className="font-semibold text-gray-800">Top 10 Sub-Zones by Sales Performance</h4>
+                </div>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">#</TableHead>
+                        <TableHead>Sub-Zone</TableHead>
+                        <TableHead>{t('common.total_sales')}</TableHead>
+                        <TableHead>Average Price</TableHead>
+                        <TableHead>Contribution</TableHead>
+                        <TableHead>Trend</TableHead>
+                        <TableHead>Population</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {zoneSubZoneData.top10.map((performance, index) => (
+                        <TableRow key={performance.subZone.id} className="hover:bg-gray-50 transition-colors">
+                          <TableCell className="font-medium">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                              index < 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {index + 1}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{performance.subZone.name}</p>
+                              <p className="text-xs text-gray-500" dir="rtl">{performance.subZone.nameAr}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-semibold">
+                            {performance.totalSales.toFixed(2)}M SAR
+                          </TableCell>
+                          <TableCell>{performance.avgPrice.toFixed(2)} SAR</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-16 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-600 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(performance.percentageContribution * 2, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium">
+                                {performance.percentageContribution.toFixed(1)}%
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              performance.trend === 'up' ? 'default' : 
+                              performance.trend === 'down' ? 'destructive' : 'secondary'
+                            }>
+                              {performance.trend === 'up' ? '↗️ Up' : 
+                               performance.trend === 'down' ? '↘️ Down' : '➡️ Stable'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {(performance.subZone.population || 0).toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      
+                      {/* Others Row */}
+                      {zoneSubZoneData.others.count > 0 && (
+                        <TableRow className="bg-gray-50 border-t-2 border-gray-200 font-medium">
+                          <TableCell>-</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <span>Others</span>
+                              <Badge variant="outline" className="text-xs">
+                                {zoneSubZoneData.others.count} Sub-Zones
+                              </Badge>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-semibold">
+                            {zoneSubZoneData.others.totalSales.toFixed(2)}M SAR
+                          </TableCell>
+                          <TableCell>{zoneSubZoneData.others.avgPrice.toFixed(2)} SAR</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-16 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-gray-600 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(zoneSubZoneData.others.percentageContribution * 2, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium">
+                                {zoneSubZoneData.others.percentageContribution.toFixed(1)}%
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>-</TableCell>
+                          <TableCell>-</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
       {/* Price Detail Modal */}
       <Dialog open={isPriceModalOpen} onOpenChange={setIsPriceModalOpen}>
         <DialogContent className="max-w-4xl">
@@ -593,6 +973,320 @@ const HighchartsPerformance: React.FC = () => {
               </TableBody>
             </Table>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Sales Detail Modal */}
+      <Dialog open={isSalesModalOpen} onOpenChange={setIsSalesModalOpen}>
+        <DialogContent className="max-w-6xl h-[80vh] flex flex-col animate-in fade-in-0 zoom-in-95 duration-300">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">
+                  Sales Analysis - {selectedZone}
+                </h3>
+                {zoneSubZoneData && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Top 10 Performers • {zoneSubZoneData.others.count} Others
+                  </p>
+                )}
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          
+          {isLoadingModalData ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p className="text-gray-600">Loading sub-zone data...</p>
+              </div>
+            </div>
+          ) : zoneSubZoneData ? (
+            <div className="flex-1 overflow-auto space-y-6 p-2">
+              {/* Zone Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800">Total Sales</h4>
+                  <p className="text-2xl font-bold text-blue-900">
+                    {(zoneSubZoneData.totalZoneSales).toFixed(1)}M SAR
+                  </p>
+                </div>
+                <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800">Average Price</h4>
+                  <p className="text-2xl font-bold text-green-900">
+                    {zoneSubZoneData.avgZonePrice.toFixed(2)} SAR
+                  </p>
+                </div>
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                  <h4 className="font-semibold text-purple-800">Sub-Zones</h4>
+                  <p className="text-2xl font-bold text-purple-900">
+                    {zoneSubZoneData.subZones.length}
+                  </p>
+                </div>
+              </div>
+
+              {/* Top 10 Sub-Zones Table */}
+              <div className="bg-white rounded-lg border">
+                <div className="p-4 border-b bg-gray-50 rounded-t-lg">
+                  <h4 className="font-semibold text-gray-800">Top 10 Sub-Zones by Sales Performance</h4>
+                </div>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">#</TableHead>
+                        <TableHead>Sub-Zone</TableHead>
+                        <TableHead>Total Sales</TableHead>
+                        <TableHead>Average Price</TableHead>
+                        <TableHead>Contribution</TableHead>
+                        <TableHead>Trend</TableHead>
+                        <TableHead>Population</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {zoneSubZoneData.top10.map((performance, index) => (
+                        <TableRow key={performance.subZone.id} className="hover:bg-gray-50 transition-colors">
+                          <TableCell className="font-medium">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                              index < 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {index + 1}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{performance.subZone.name}</p>
+                              <p className="text-xs text-gray-500" dir="rtl">{performance.subZone.nameAr}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-semibold">
+                            {performance.totalSales.toFixed(2)}M SAR
+                          </TableCell>
+                          <TableCell>{performance.avgPrice.toFixed(2)} SAR</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-16 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-600 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(performance.percentageContribution * 2, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium">
+                                {performance.percentageContribution.toFixed(1)}%
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              performance.trend === 'up' ? 'default' : 
+                              performance.trend === 'down' ? 'destructive' : 'secondary'
+                            }>
+                              {performance.trend === 'up' ? '↗️ Up' : 
+                               performance.trend === 'down' ? '↘️ Down' : '➡️ Stable'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {(performance.subZone.population || 0).toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      
+                      {/* Others Row */}
+                      {zoneSubZoneData.others.count > 0 && (
+                        <TableRow className="bg-gray-50 border-t-2 border-gray-200 font-medium">
+                          <TableCell>-</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <span>Others</span>
+                              <Badge variant="outline" className="text-xs">
+                                {zoneSubZoneData.others.count} Sub-Zones
+                              </Badge>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-semibold">
+                            {zoneSubZoneData.others.totalSales.toFixed(2)}M SAR
+                          </TableCell>
+                          <TableCell>{zoneSubZoneData.others.avgPrice.toFixed(2)} SAR</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-16 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-gray-600 h-2 rounded-full" 
+                                  style={{ width: `${Math.min(zoneSubZoneData.others.percentageContribution * 2, 100)}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium">
+                                {zoneSubZoneData.others.percentageContribution.toFixed(1)}%
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>-</TableCell>
+                          <TableCell>-</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Price Detail Modal */}
+      <Dialog open={isPriceModalOpen} onOpenChange={setIsPriceModalOpen}>
+        <DialogContent className="max-w-6xl h-[80vh] flex flex-col animate-in fade-in-0 zoom-in-95 duration-300">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="flex items-center space-x-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <LineChart className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">
+                  Price Analysis - {selectedZone}
+                </h3>
+                {zoneSubZoneData && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Top 10 Performers • {zoneSubZoneData.others.count} Others
+                  </p>
+                )}
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          
+          {isLoadingModalData ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                <p className="text-gray-600">Loading sub-zone data...</p>
+              </div>
+            </div>
+          ) : zoneSubZoneData ? (
+            <div className="flex-1 overflow-auto space-y-6 p-2">
+              {/* Zone Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800">Average Zone Price</h4>
+                  <p className="text-2xl font-bold text-green-900">
+                    {zoneSubZoneData.avgZonePrice.toFixed(2)} SAR
+                  </p>
+                </div>
+                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800">Total Sales</h4>
+                  <p className="text-2xl font-bold text-blue-900">
+                    {(zoneSubZoneData.totalZoneSales).toFixed(1)}M SAR
+                  </p>
+                </div>
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                  <h4 className="font-semibold text-purple-800">Sub-Zones</h4>
+                  <p className="text-2xl font-bold text-purple-900">
+                    {zoneSubZoneData.subZones.length}
+                  </p>
+                </div>
+              </div>
+
+              {/* Top 10 Sub-Zones Table */}
+              <div className="bg-white rounded-lg border">
+                <div className="p-4 border-b bg-gray-50 rounded-t-lg">
+                  <h4 className="font-semibold text-gray-800">Top 10 Sub-Zones by Average Price</h4>
+                </div>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">#</TableHead>
+                        <TableHead>Sub-Zone</TableHead>
+                        <TableHead>Average Price</TableHead>
+                        <TableHead>Total Sales</TableHead>
+                        <TableHead>Price vs Zone Avg</TableHead>
+                        <TableHead>Trend</TableHead>
+                        <TableHead>Population</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {zoneSubZoneData.top10
+                        .sort((a, b) => b.avgPrice - a.avgPrice)
+                        .map((performance, index) => (
+                        <TableRow key={performance.subZone.id} className="hover:bg-gray-50 transition-colors">
+                          <TableCell className="font-medium">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                              index < 3 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {index + 1}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{performance.subZone.name}</p>
+                              <p className="text-xs text-gray-500" dir="rtl">{performance.subZone.nameAr}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-semibold text-green-700">
+                            {performance.avgPrice.toFixed(2)} SAR
+                          </TableCell>
+                          <TableCell>{performance.totalSales.toFixed(2)}M SAR</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <span className={`text-sm font-medium ${
+                                performance.avgPrice > zoneSubZoneData.avgZonePrice ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                                {performance.avgPrice > zoneSubZoneData.avgZonePrice ? '+' : ''}
+                                {((performance.avgPrice / zoneSubZoneData.avgZonePrice - 1) * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              performance.trend === 'up' ? 'default' : 
+                              performance.trend === 'down' ? 'destructive' : 'secondary'
+                            }>
+                              {performance.trend === 'up' ? '↗️ Up' : 
+                               performance.trend === 'down' ? '↘️ Down' : '➡️ Stable'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {(performance.subZone.population || 0).toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      
+                      {/* Others Row */}
+                      {zoneSubZoneData.others.count > 0 && (
+                        <TableRow className="bg-gray-50 border-t-2 border-gray-200 font-medium">
+                          <TableCell>-</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <span>Others</span>
+                              <Badge variant="outline" className="text-xs">
+                                {zoneSubZoneData.others.count} Sub-Zones
+                              </Badge>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-semibold">
+                            {zoneSubZoneData.others.avgPrice.toFixed(2)} SAR
+                          </TableCell>
+                          <TableCell>{zoneSubZoneData.others.totalSales.toFixed(2)}M SAR</TableCell>
+                          <TableCell>
+                            <span className={`text-sm font-medium ${
+                              zoneSubZoneData.others.avgPrice > zoneSubZoneData.avgZonePrice ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {zoneSubZoneData.others.avgPrice > zoneSubZoneData.avgZonePrice ? '+' : ''}
+                              {((zoneSubZoneData.others.avgPrice / zoneSubZoneData.avgZonePrice - 1) * 100).toFixed(1)}%
+                            </span>
+                          </TableCell>
+                          <TableCell>-</TableCell>
+                          <TableCell>-</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </DialogContent>
       </Dialog>
     </div>

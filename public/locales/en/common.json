@@ -262,11 +262,20 @@
       },
       "modals": {
         "sales_detail": {
-          "title": "Sales Value Detail by Zone"
+          "title": "Sales Detail Analysis"
         },
         "price_detail": {
-          "title": "Price Detail by Zone"
-        }
+          "title": "Price Detail Analysis"
+        },
+        "top_performers": "Top Performers",
+        "others": "others",
+        "avg_price": "Average Price",
+        "sub_zones": "Sub-Zones",
+        "top_10_sub_zones": "Top 10 Sub-Zones by Sales Performance",
+        "sub_zone": "Sub-Zone",
+        "contribution": "Contribution",
+        "trend": "Trend",
+        "population": "Population"
       }
     }
   }
