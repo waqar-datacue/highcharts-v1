@@ -1,0 +1,225 @@
+{
+  "app": {
+    "title": "داتاكيو إنسايتس",
+    "subtitle": "ذكاء التجزئة المدعوم بالبيانات"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "forgot_password": "نسيت كلمة المرور",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "submit": "إرسال"
+  },
+  "navigation": {
+    "dashboard": "لوحة المعلومات",
+    "summary": "ملخص",
+    "performance": "الأداء",
+    "settings": "الإعدادات",
+    "custom_dashboards": "لوحات معلومات مخصصة"
+  },
+  "header": {
+    "notifications": "الإشعارات",
+    "profile": "الملف الشخصي",
+    "sign_out": "تسجيل الخروج",
+    "settings": "إعدادات الملف الشخصي",
+    "help": "المساعدة والوثائق",
+    "language_switch": "التبديل إلى الإنجليزية"
+  },
+  "widgets": {
+    "metric": "مقياس",
+    "chart": "رسم بياني",
+    "summary": "ملخص",
+    "data_table": "جدول البيانات",
+    "heatmap": "خريطة حرارية",
+    "executive_summary": "ملخص تنفيذي",
+    "line_chart": "رسم بياني خطي",
+    "bar_chart": "رسم بياني شريطي",
+    "pie_chart": "رسم بياني دائري",
+    "table_view": "عرض جدولي"
+  },
+  "filters": {
+    "store_types": "أنواع المتاجر",
+    "location_zones": "مناطق الموقع",
+    "time_period": "الفترة الزمنية",
+    "date_range": "نطاق التاريخ",
+    "apply": "تطبيق الفلاتر",
+    "reset": "إعادة ضبط"
+  },
+  "time_periods": {
+    "daily": "يومي",
+    "weekly": "أسبوعي",
+    "monthly": "شهري",
+    "custom": "مخصص"
+  },
+  "common": {
+    "loading": "جارِ التحميل...",
+    "error": "خطأ",
+    "success": "تم بنجاح",
+    "warning": "تحذير",
+    "info": "معلومات",
+    "close": "إغلاق",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض",
+    "download": "تنزيل",
+    "export": "تصدير",
+    "share": "مشاركة",
+    "categories": "الفئات",
+    "basic_plan": "الخطة الأساسية",
+    "coming_soon": "الميزة قادمة قريباً",
+    "no_access": "ليس لديك حق الوصول إلى بيانات هذه الفئة",
+    "ai_insights_opened": "تم فتح الذكاء الاصطناعي لـ",
+    "ai_error": "فشل في فتح الذكاء الاصطناعي. يرجى المحاولة مرة أخرى.",
+    "downloading": "جاري تنزيل",
+    "as_csv": "كملف CSV",
+    "changed": "تم تغيير",
+    "visualization_to": "طريقة العرض إلى",
+    "fixed": "ثابت",
+    "open_ai_insights": "فتح رؤى الذكاء الاصطناعي",
+    "pause": "تم إيقاف تشغيل الصوت مؤقتًا"
+  },
+  "dashboard": {
+    "title": "لوحة الملخص",
+    "overview": "نظرة عامة على المقاييس الرئيسية لفئاتك",
+    "metrics": {
+      "sales_value": "قيمة المبيعات",
+      "market_share": "حصة السوق",
+      "tadawul_index": "مؤشر تداول العام",
+      "tasi_short": "تاسي",
+      "category": "الفئة",
+      "beverage": "المشروبات"
+    },
+    "currency": {
+      "sar": "ريال",
+      "percent": "%"
+    },
+    "executive_summary": {
+      "title": "الملخص التنفيذي",
+      "read": "قراءة",
+      "close": "إغلاق",
+      "listen": "استماع",
+      "now_playing": "يتم الاستماع الآن"
+    },
+    "key_highlights": "النقاط الرئيسية",
+    "regional_performance": "الأداء الإقليمي",
+    "consumer_insights": "رؤى المستهلك",
+    "opportunities": "الفرص المستقبلية",
+    "competitive_landscape": "المشهد التنافسي"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "إدارة حسابك وتفضيلاتك",
+    "coming_soon": "صفحة الإعدادات قادمة قريباً"
+  },
+  "performance": {
+    "title": "لوحة معلومات الأداء",
+    "subtitle": "مقاييس واتجاهات الأداء التفصيلية",
+    "filters": {
+      "active_filters": "الفلاتر النشطة:",
+      "select_store_types": "اختر أنواع المتاجر",
+      "select_locations": "اختر المواقع",
+      "select_time_period": "اختر الفترة الزمنية",
+      "pick_date_range": "اختر نطاق التاريخ",
+      "store_label": "المتجر:",
+      "location_label": "الموقع:",
+      "period_label": "الفترة:",
+      "selected_count": "تم اختيار {{count}}"
+    },
+    "widgets": {
+      "add_widgets": "إضافة عناصر",
+      "dashboard_widgets": "عناصر لوحة المعلومات",
+      "add_first_widget": "إضافة أول عنصر",
+      "no_widgets_title": "لا توجد عناصر مضافة",
+      "no_widgets_description": "أضف عناصر باستخدام الزر أعلاه لتخصيص لوحة المعلومات الخاصة بك",
+      "widget_instructions": "انقر على العناصر لإضافتها أو إزالتها من لوحة المعلومات. اسحب العناصر لإعادة ترتيبها."
+    },
+    "categories": {
+      "metrics": "المقاييس",
+      "charts": "الرسوم البيانية",
+      "tables": "الجداول",
+      "maps": "الخرائط",
+      "other": "أخرى"
+    },
+    "metrics": {
+      "sales_value": {
+        "title": "قيمة المبيعات",
+        "description": "مقياس رئيسي يوضح إجمالي قيمة المبيعات"
+      },
+      "sales_volume": {
+        "title": "حجم المبيعات",
+        "description": "مقياس رئيسي يوضح إجمالي حجم المبيعات"
+      },
+      "customer_count": {
+        "title": "عدد العملاء",
+        "description": "مقياس رئيسي يوضح إجمالي عدد العملاء"
+      },
+      "store_count": {
+        "title": "عدد المتاجر",
+        "description": "إجمالي عدد المتاجر في الشبكة"
+      },
+      "out_of_stock": {
+        "title": "نسبة نفاد المخزون",
+        "description": "النسبة المئوية للمنتجات التي نفدت من المخزون حالياً"
+      }
+    },
+    "charts": {
+      "price_trend": {
+        "title": "اتجاه متوسط سعر البيع بالتجزئة",
+        "description": "رسم بياني خطي يوضح اتجاهات الأسعار بمرور الوقت"
+      },
+      "customer_trend": {
+        "title": "رسم بياني لاتجاه العملاء",
+        "description": "رسم بياني خطي يوضح اتجاهات عدد العملاء بمرور الوقت"
+      },
+      "sales_by_store": {
+        "title": "المبيعات حسب نوع المتجر",
+        "description": "رسم بياني شريطي يوضح تقسيم المبيعات حسب نوع المتجر"
+      },
+      "sales_distribution": {
+        "title": "توزيع المبيعات حسب المنطقة",
+        "description": "رسم بياني دائري يوضح توزيع المبيعات عبر المناطق"
+      }
+    },
+    "tables": {
+      "top_skus": {
+        "title": "أفضل وحدات حفظ المخزون",
+        "description": "جدول يسرد وحدات حفظ المخزون الأفضل أداءً"
+      },
+      "detailed_skus": {
+        "title": "تحليل مفصل لوحدات حفظ المخزون",
+        "description": "جدول تحليل مفصل لوحدات حفظ المخزون للمنتجات مع بيانات المبيعات"
+      },
+      "columns": {
+        "sku": "وحدة حفظ المخزون",
+        "name": "اسم المنتج",
+        "sales": "قيمة المبيعات",
+        "volume": "الحجم",
+        "units": "الوحدات المباعة",
+        "share": "الحصة"
+      }
+    },
+    "maps": {
+      "riyadh_sales": {
+        "title": "توزيع مبيعات الرياض",
+        "description": "خريطة حرارية توضح توزيع المبيعات عبر الرياض"
+      }
+    },
+    "errors": {
+      "cannot_remove_default": "لا يمكن إزالة العنصر الافتراضي",
+      "keep_default_widget": "يجب عليك الاحتفاظ بواحد على الأقل من العناصر الافتراضية"
+    },
+    "notifications": {
+      "time_period_updated": "تم تحديث الفترة الزمنية",
+      "changed_to": "تم التغيير إلى {{value}}",
+      "store_types_updated": "تم تحديث أنواع المتاجر",
+      "all_selected": "تم اختيار الكل",
+      "selection_changed": "تم تغيير الاختيار",
+      "locations_updated": "تم تحديث المواقع",
+      "date_range_updated": "تم تحديث نطاق التاريخ",
+      "date_range_message": "من {{from}} إلى {{to}}"
+    }
+  }
+} 

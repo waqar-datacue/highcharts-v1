@@ -1,0 +1,282 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 150 30% 96%;
+    --foreground: 168 47% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 168 47% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 168 47% 17%;
+
+    --primary: 168 47% 17%;
+    --primary-foreground: 150 30% 96%;
+
+    --secondary: 168 25% 58%;
+    --secondary-foreground: 168 47% 17%;
+
+    --muted: 150 30% 96%;
+    --muted-foreground: 168 25% 45%;
+
+    --accent: 168 40% 80%;
+    --accent-foreground: 168 47% 17%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 168 40% 80%;
+    --input: 168 40% 80%;
+    --ring: 168 47% 17%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 150 30% 96%;
+    --sidebar-foreground: 168 47% 17%;
+    --sidebar-primary: 168 47% 17%;
+    --sidebar-primary-foreground: 150 30% 96%;
+    --sidebar-accent: 168 40% 80%;
+    --sidebar-accent-foreground: 168 47% 17%;
+    --sidebar-border: 168 40% 80%;
+    --sidebar-ring: 168 47% 17%;
+  }
+
+  .dark {
+    --background: 168 47% 17%;
+    --foreground: 150 30% 96%;
+
+    --card: 168 47% 17%;
+    --card-foreground: 150 30% 96%;
+
+    --popover: 168 47% 17%;
+    --popover-foreground: 150 30% 96%;
+
+    --primary: 150 30% 96%;
+    --primary-foreground: 168 47% 17%;
+
+    --secondary: 168 25% 58%;
+    --secondary-foreground: 150 30% 96%;
+
+    --muted: 168 25% 45%;
+    --muted-foreground: 168 40% 80%;
+
+    --accent: 168 25% 45%;
+    --accent-foreground: 150 30% 96%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 168 25% 45%;
+    --input: 168 25% 45%;
+    --ring: 168 40% 80%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.data-table-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.data-table-container table {
+  width: 100%;
+}
+
+.data-table-container thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: white;
+}
+
+.data-table-body {
+  overflow-x: auto;
+}
+
+/* Widget Grid Layout */
+.widget-grid {
+  position: relative;
+  width: 100%;
+}
+
+.widget-container {
+  transition: box-shadow 0.2s;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(63, 131, 248, 0.1);
+  border: 2px dashed rgba(63, 131, 248, 0.4);
+  border-radius: 8px;
+}
+
+.react-grid-item.react-draggable-dragging {
+  z-index: 100;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  cursor: grabbing !important;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  border-right: 2px solid rgba(63, 131, 248, 0.4);
+  border-bottom: 2px solid rgba(63, 131, 248, 0.4);
+}
+
+.draggable-handle {
+  cursor: grab;
+}
+
+.draggable-handle:active {
+  cursor: grabbing;
+}
+
+/* RTL Support */
+html[dir="rtl"] {
+  /* Handle specific RTL adjustments */
+  .ml-auto {
+    margin-left: unset;
+    margin-right: auto;
+  }
+  
+  .mr-auto {
+    margin-right: unset;
+    margin-left: auto;
+  }
+  
+  /* Mirror icons that represent direction */
+  .rtl-mirror {
+    transform: scaleX(-1);
+  }
+
+  /* Adjust dropdowns to align with RTL */
+  .dropdown-menu-content[data-side="right"],
+  .context-menu-content[data-side="right"] {
+    margin-left: unset;
+    margin-right: 4px;
+  }
+  
+  /* Fix for specific UI components */
+  .checkbox-indicator {
+    transform: translateX(-50%) translateY(-50%);
+  }
+  
+  /* Adjust Tailwind classes for padding and margin */
+  .space-x-4 > * + * {
+    margin-left: unset;
+    margin-right: 1rem;
+  }
+  
+  .space-x-2 > * + * {
+    margin-left: unset;
+    margin-right: 0.5rem;
+  }
+}
+
+/* Helper classes for bidirectional support */
+.ms-auto {
+  margin-inline-start: auto !important;
+}
+
+.me-auto {
+  margin-inline-end: auto !important;
+}
+
+.ps-2 {
+  padding-inline-start: 0.5rem !important;
+}
+
+.pe-2 {
+  padding-inline-end: 0.5rem !important;
+}
+
+.ms-2 {
+  margin-inline-start: 0.5rem !important;
+}
+
+.me-2 {
+  margin-inline-end: 0.5rem !important;
+}
+
+.ms-4 {
+  margin-inline-start: 1rem !important;
+}
+
+.me-4 {
+  margin-inline-end: 1rem !important;
+}
+
+/* Enhanced RTL support for flex layouts */
+html[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .justify-end {
+  justify-content: flex-start;
+}
+
+html[dir="rtl"] .justify-start {
+  justify-content: flex-end;
+}
+
+/* Keep this class unchanged in RTL */
+.flex-row-keep {
+  flex-direction: row !important;
+}
+
+/* RTL Chart Fixes */
+.rtl-chart-container {
+  direction: ltr; /* Keep charts in LTR mode for proper axis rendering */
+  width: 98%; /* Slightly reduce width to avoid overflow */
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+}
+
+html[dir="rtl"] .recharts-wrapper,
+html[dir="rtl"] .recharts-legend-wrapper {
+  direction: rtl; /* Ensure legend text is properly aligned */
+}
+
+html[dir="rtl"] .widget-container {
+  overflow: hidden; /* Prevent widget overflow */
+}
+
+/* Ensure ResponsiveContainer behaves well in RTL mode */
+html[dir="rtl"] .recharts-responsive-container {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* RTL Grid Layout Fixes */
+.rtl-widget-grid {
+  padding-inline-start: 8px;
+  padding-inline-end: 8px;
+}
+
+.rtl-layout.react-grid-layout {
+  direction: ltr; /* Keep grid layout working properly */
+}
+
+.rtl-layout .react-grid-item {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Ensure RTL specific tweaks for responsive layout */
+html[dir="rtl"] .widget-grid .react-grid-layout {
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+html[dir="rtl"] .react-grid-item.react-draggable-dragging {
+  z-index: 3;
+  transition: none;
+}

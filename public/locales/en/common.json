@@ -1,0 +1,225 @@
+{
+  "app": {
+    "title": "DataCue Insights",
+    "subtitle": "Data-driven retail intelligence"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "forgot_password": "Forgot Password",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Submit"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "summary": "Summary",
+    "performance": "Performance",
+    "settings": "Settings",
+    "custom_dashboards": "Custom Dashboards"
+  },
+  "header": {
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "sign_out": "Sign Out",
+    "settings": "Profile Settings",
+    "help": "Help & Documentation",
+    "language_switch": "Switch to Arabic"
+  },
+  "widgets": {
+    "metric": "Metric",
+    "chart": "Chart",
+    "summary": "Summary",
+    "data_table": "Data Table",
+    "heatmap": "Heatmap",
+    "executive_summary": "Executive Summary",
+    "line_chart": "Line Chart",
+    "bar_chart": "Bar Chart",
+    "pie_chart": "Pie Chart",
+    "table_view": "Table View"
+  },
+  "filters": {
+    "store_types": "Store Types",
+    "location_zones": "Location Zones",
+    "time_period": "Time Period",
+    "date_range": "Date Range",
+    "apply": "Apply Filters",
+    "reset": "Reset"
+  },
+  "time_periods": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "custom": "Custom"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "download": "Download",
+    "export": "Export",
+    "share": "Share",
+    "categories": "Categories",
+    "basic_plan": "Basic Plan",
+    "coming_soon": "Feature coming soon",
+    "no_access": "You don't have access to this category's data",
+    "ai_insights_opened": "AI Insights opened for",
+    "ai_error": "Failed to open AI insights. Please try again.",
+    "downloading": "Downloading",
+    "as_csv": "data as CSV",
+    "changed": "Changed",
+    "visualization_to": "visualization to",
+    "fixed": "Fixed",
+    "open_ai_insights": "Open AI Insights",
+    "pause": "Paused audio playback"
+  },
+  "dashboard": {
+    "title": "Summary Dashboard",
+    "overview": "Overview of key metrics for your categories",
+    "metrics": {
+      "sales_value": "Sales Value",
+      "market_share": "Market Share",
+      "tadawul_index": "Tadawul All Share Index",
+      "tasi_short": "TASI",
+      "category": "Category",
+      "beverage": "Beverages"
+    },
+    "currency": {
+      "sar": "SAR",
+      "percent": "%"
+    },
+    "executive_summary": {
+      "title": "Executive Summary",
+      "read": "Read",
+      "close": "Close",
+      "listen": "Listen",
+      "now_playing": "Now Playing"
+    },
+    "key_highlights": "Key Highlights",
+    "regional_performance": "Regional Performance",
+    "consumer_insights": "Consumer Insights",
+    "opportunities": "Future Opportunities",
+    "competitive_landscape": "Competitive Landscape"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "coming_soon": "Settings page coming soon"
+  },
+  "performance": {
+    "title": "Performance Dashboard",
+    "subtitle": "Detailed performance metrics and trends",
+    "filters": {
+      "active_filters": "Active filters:",
+      "select_store_types": "Select Store Types",
+      "select_locations": "Select Locations",
+      "select_time_period": "Select Time Period",
+      "pick_date_range": "Pick a date range",
+      "store_label": "Store:",
+      "location_label": "Location:",
+      "period_label": "Period:",
+      "selected_count": "{{count}} selected"
+    },
+    "widgets": {
+      "add_widgets": "Add Widgets",
+      "dashboard_widgets": "Dashboard Widgets",
+      "add_first_widget": "Add First Widget",
+      "no_widgets_title": "No widgets added",
+      "no_widgets_description": "Add widgets using the button above to customize your dashboard",
+      "widget_instructions": "Click on widgets to add or remove them from the dashboard. Drag widgets to rearrange them."
+    },
+    "categories": {
+      "metrics": "Metrics",
+      "charts": "Charts",
+      "tables": "Tables",
+      "maps": "Maps",
+      "other": "Other"
+    },
+    "metrics": {
+      "sales_value": {
+        "title": "Sales Value",
+        "description": "Key metric showing total sales value"
+      },
+      "sales_volume": {
+        "title": "Sales Volume",
+        "description": "Key metric showing total sales volume"
+      },
+      "customer_count": {
+        "title": "Customer Count",
+        "description": "Key metric showing total customer count"
+      },
+      "store_count": {
+        "title": "Store Count",
+        "description": "Total number of stores in the network"
+      },
+      "out_of_stock": {
+        "title": "Out of Stock Percentage",
+        "description": "Percentage of products currently out of stock"
+      }
+    },
+    "charts": {
+      "price_trend": {
+        "title": "Average Retail Price Trend",
+        "description": "Line chart showing price trends over time"
+      },
+      "customer_trend": {
+        "title": "Customer Trend Chart",
+        "description": "Line chart showing customer count trends over time"
+      },
+      "sales_by_store": {
+        "title": "Sales by Store Type",
+        "description": "Bar chart showing sales breakdown by store type"
+      },
+      "sales_distribution": {
+        "title": "Sales Distribution by Region",
+        "description": "Pie chart showing sales distribution across regions"
+      }
+    },
+    "tables": {
+      "top_skus": {
+        "title": "Top SKUs",
+        "description": "Table listing the top performing SKUs"
+      },
+      "detailed_skus": {
+        "title": "Detailed SKUs Analysis",
+        "description": "Detailed analysis table of product SKUs with sales data"
+      },
+      "columns": {
+        "sku": "SKU",
+        "name": "Product Name",
+        "sales": "Sales Value",
+        "volume": "Volume",
+        "units": "Units Sold",
+        "share": "Share"
+      }
+    },
+    "maps": {
+      "riyadh_sales": {
+        "title": "Riyadh Sales Distribution",
+        "description": "Heatmap showing sales distribution across Riyadh"
+      }
+    },
+    "errors": {
+      "cannot_remove_default": "Cannot remove default widget",
+      "keep_default_widget": "You must keep at least one of the default widgets"
+    },
+    "notifications": {
+      "time_period_updated": "Time Period Updated",
+      "changed_to": "Changed to {{value}}",
+      "store_types_updated": "Store Types Updated",
+      "all_selected": "All selected",
+      "selection_changed": "Selection changed",
+      "locations_updated": "Locations Updated",
+      "date_range_updated": "Date Range Updated",
+      "date_range_message": "From {{from}} to {{to}}"
+    }
+  }
+} 
