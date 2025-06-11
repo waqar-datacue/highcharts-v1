@@ -15,6 +15,7 @@
     "dashboard": "لوحة المعلومات",
     "summary": "ملخص",
     "performance": "الأداء",
+    "highcharts_performance": "أداء هايتشارتس",
     "settings": "الإعدادات",
     "custom_dashboards": "لوحات معلومات مخصصة"
   },
@@ -79,7 +80,10 @@
     "visualization_to": "طريقة العرض إلى",
     "fixed": "ثابت",
     "open_ai_insights": "فتح رؤى الذكاء الاصطناعي",
-    "pause": "تم إيقاف تشغيل الصوت مؤقتًا"
+    "pause": "تم إيقاف تشغيل الصوت مؤقتًا",
+    "all": "الكل",
+    "month": "الشهر",
+    "total": "المجموع"
   },
   "dashboard": {
     "title": "لوحة الملخص",
@@ -220,6 +224,50 @@
       "locations_updated": "تم تحديث المواقع",
       "date_range_updated": "تم تحديث نطاق التاريخ",
       "date_range_message": "من {{from}} إلى {{to}}"
+    },
+    "highcharts": {
+      "overview": "تحليلات متقدمة مع رسوم بيانية تفاعلية من هايتشارتس",
+      "filters": {
+        "zone": "المنطقة",
+        "brand": "العلامة التجارية",
+        "time_period": "الفترة الزمنية",
+        "active_filters": "{{count}} فلتر نشط",
+        "monthly": "شهري"
+      },
+      "charts": {
+        "sales_by_zone": {
+          "title": "قيمة المبيعات حسب المنطقة"
+        },
+        "price_by_zone": {
+          "title": "متوسط سعر البيع حسب المنطقة"
+        }
+      },
+      "zones": {
+        "north_riyadh": "شمال الرياض",
+        "south_riyadh": "جنوب الرياض",
+        "east_riyadh": "شرق الرياض",
+        "west_riyadh": "غرب الرياض",
+        "central_riyadh": "وسط الرياض"
+      },
+      "chart_types": {
+        "stacked_bar": "شريطي مكدس",
+        "grouped_bar": "شريطي مجمع",
+        "area_chart": "مساحي",
+        "line": "خطي",
+        "spline": "منحني",
+        "column": "عمودي"
+      },
+      "metrics": {
+        "average_price": "متوسط السعر (ريال)"
+      },
+      "modals": {
+        "sales_detail": {
+          "title": "تفاصيل قيمة المبيعات حسب المنطقة"
+        },
+        "price_detail": {
+          "title": "تفاصيل الأسعار حسب المنطقة"
+        }
+      }
     }
   }
 } 

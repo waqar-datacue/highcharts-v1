@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "../../lib/utils";
-import { LayoutDashboard, LineChart, PieChart, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, LineChart, PieChart, Settings, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { useTranslation } from "react-i18next";
@@ -78,6 +78,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
       icon: LineChart,
       label: t("navigation.performance"),
       href: "/performance",
+    },
+    {
+      icon: TrendingUp,
+      label: t("navigation.highcharts_performance"),
+      href: "/highcharts-performance",
     },
     {
       icon: PieChart,

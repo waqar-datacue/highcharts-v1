@@ -15,6 +15,7 @@
     "dashboard": "Dashboard",
     "summary": "Summary",
     "performance": "Performance",
+    "highcharts_performance": "Highcharts Performance",
     "settings": "Settings",
     "custom_dashboards": "Custom Dashboards"
   },
@@ -79,7 +80,10 @@
     "visualization_to": "visualization to",
     "fixed": "Fixed",
     "open_ai_insights": "Open AI Insights",
-    "pause": "Paused audio playback"
+    "pause": "Paused audio playbook",
+    "all": "All",
+    "month": "Month",
+    "total": "Total"
   },
   "dashboard": {
     "title": "Summary Dashboard",
@@ -220,6 +224,50 @@
       "locations_updated": "Locations Updated",
       "date_range_updated": "Date Range Updated",
       "date_range_message": "From {{from}} to {{to}}"
+    },
+    "highcharts": {
+      "overview": "Advanced analytics with interactive Highcharts visualizations",
+      "filters": {
+        "zone": "Zone",
+        "brand": "Brand",
+        "time_period": "Time Period",
+        "active_filters": "{{count}} active filter(s)",
+        "monthly": "Monthly"
+      },
+      "charts": {
+        "sales_by_zone": {
+          "title": "Sales Value by Zone"
+        },
+        "price_by_zone": {
+          "title": "Average Selling Price by Zone"
+        }
+      },
+      "zones": {
+        "north_riyadh": "North Riyadh",
+        "south_riyadh": "South Riyadh",
+        "east_riyadh": "East Riyadh",
+        "west_riyadh": "West Riyadh",
+        "central_riyadh": "Central Riyadh"
+      },
+      "chart_types": {
+        "stacked_bar": "Stacked Bar",
+        "grouped_bar": "Grouped Bar",
+        "area_chart": "Area Chart",
+        "line": "Line",
+        "spline": "Spline",
+        "column": "Column"
+      },
+      "metrics": {
+        "average_price": "Average Price (SAR)"
+      },
+      "modals": {
+        "sales_detail": {
+          "title": "Sales Value Detail by Zone"
+        },
+        "price_detail": {
+          "title": "Price Detail by Zone"
+        }
+      }
     }
   }
 } 

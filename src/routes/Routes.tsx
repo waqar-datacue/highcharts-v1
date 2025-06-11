@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Performance from "../pages/Performance";
+import HighchartsPerformance from "../pages/HighchartsPerformance";
 import CustomDashboards from "../pages/CustomDashboards";
 import Settings from "../pages/Settings";
 import NotFound from "../pages/NotFound";
@@ -23,6 +24,7 @@ const AppRoutes: React.FC = () => {
       }>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="performance" element={<Performance />} />
+        <Route path="highcharts-performance" element={<HighchartsPerformance />} />
         <Route path="custom-dashboards" element={<CustomDashboards />} />
         <Route path="settings" element={<Settings />} />
         <Route path="executive-summary" element={<ExecutiveSummaryDemo />} />
