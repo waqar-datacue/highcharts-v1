@@ -195,8 +195,33 @@ const HighchartsPerformance: React.FC = () => {
     setLoading(true);
   };
 
+  // Enhanced setChartTypes with validation and error handling
   const setChartTypes = (newTypes: any) => {
-    updatePersistedChartTypes(newTypes);
+    try {
+      // Validate that newTypes is an object and has the required structure
+      if (!newTypes || typeof newTypes !== 'object') {
+        console.error('Invalid chart types provided:', newTypes);
+        return;
+      }
+
+      // Validate sales chart type
+      if (newTypes.sales && !['stackedBar', 'groupedBar', 'areaChart'].includes(newTypes.sales)) {
+        console.error('Invalid sales chart type:', newTypes.sales);
+        return;
+      }
+
+      // Validate price chart type
+      if (newTypes.price && !['line', 'spline', 'column'].includes(newTypes.price)) {
+        console.error('Invalid price chart type:', newTypes.price);
+        return;
+      }
+
+      // Update with validation
+      updatePersistedChartTypes(newTypes);
+    } catch (error) {
+      console.error('Error updating chart types:', error);
+      toast.error('Failed to update chart visualization');
+    }
   };
 
   // Sample data - in real app, this would come from API
@@ -1042,9 +1067,18 @@ const HighchartsPerformance: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <Select 
                   value={chartTypes.sales} 
-                  onValueChange={(value: 'stackedBar' | 'groupedBar' | 'areaChart') => 
-                    setChartTypes(prev => ({ ...prev, sales: value }))
-                  }
+                  onValueChange={(value: 'stackedBar' | 'groupedBar' | 'areaChart') => {
+                    try {
+                      if (!value || !['stackedBar', 'groupedBar', 'areaChart'].includes(value)) {
+                        console.error('Invalid sales chart type selected:', value);
+                        return;
+                      }
+                      setChartTypes({ ...chartTypes, sales: value });
+                    } catch (error) {
+                      console.error('Error changing sales chart type:', error);
+                      toast.error('Failed to change sales chart type');
+                    }
+                  }}
                 >
                   <SelectTrigger className="w-40">
                     <SelectValue />
@@ -1155,9 +1189,18 @@ const HighchartsPerformance: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <Select 
                   value={chartTypes.price} 
-                  onValueChange={(value: 'line' | 'spline' | 'column') => 
-                    setChartTypes(prev => ({ ...prev, price: value }))
-                  }
+                  onValueChange={(value: 'line' | 'spline' | 'column') => {
+                    try {
+                      if (!value || !['line', 'spline', 'column'].includes(value)) {
+                        console.error('Invalid price chart type selected:', value);
+                        return;
+                      }
+                      setChartTypes({ ...chartTypes, price: value });
+                    } catch (error) {
+                      console.error('Error changing price chart type:', error);
+                      toast.error('Failed to change price chart type');
+                    }
+                  }}
                 >
                   <SelectTrigger className="w-40">
                     <SelectValue />
