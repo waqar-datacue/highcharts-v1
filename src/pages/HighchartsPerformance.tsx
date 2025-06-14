@@ -13,12 +13,22 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, BarChart3, LineChart, AreaChart, Columns3, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-// Types for the new Brand filter
+// Types for enhanced interactive global filters
 export type Brand = "Coca-Cola" | "Pepsi" | "Local Brands" | "Premium Brands" | "All";
+export type Zone = "All" | "North Riyadh" | "South Riyadh" | "East Riyadh" | "West Riyadh" | "Central Riyadh";
+export type TimePeriod = "Weekly" | "Monthly" | "Quarterly" | "Yearly";
 
 type ChartType = {
   sales: 'stackedBar' | 'groupedBar' | 'areaChart';
   price: 'line' | 'spline' | 'column';
+};
+
+// Enhanced filter state type
+type FilterState = {
+  selectedZone: Zone;
+  selectedBrand: Brand;
+  selectedTimePeriod: TimePeriod;
+  isLoading: boolean;
 };
 
 // Enhanced Sub-Zone Data Types
@@ -83,12 +93,23 @@ const HighchartsPerformance: React.FC = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
-  // Local state for new filters
-  const [selectedBrand, setSelectedBrand] = useState<Brand>("All");
+  // Enhanced interactive filter state
+  const [filterState, setFilterState] = useState<FilterState>({
+    selectedZone: "All",
+    selectedBrand: "All", 
+    selectedTimePeriod: "Monthly",
+    isLoading: false
+  });
+
   const [chartTypes, setChartTypes] = useState<ChartType>({
     sales: 'stackedBar',
     price: 'line'
   });
+
+  // Filter options
+  const zoneOptions: Zone[] = ["All", "North Riyadh", "South Riyadh", "East Riyadh", "West Riyadh", "Central Riyadh"];
+  const brandOptions: Brand[] = ["All", "Coca-Cola", "Pepsi", "Local Brands", "Premium Brands"];
+  const timePeriodOptions: TimePeriod[] = ["Weekly", "Monthly", "Quarterly", "Yearly"];
 
   // Sample data - in real app, this would come from API
   const salesData: SalesData[] = [
@@ -256,9 +277,6 @@ const HighchartsPerformance: React.FC = () => {
     };
   };
 
-  // Brand options
-  const brandOptions: Brand[] = ["All", "Coca-Cola", "Pepsi", "Local Brands", "Premium Brands"];
-
   // AI functionality handlers
   const handleSalesAIClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -404,6 +422,132 @@ const HighchartsPerformance: React.FC = () => {
     return simpleConfig;
   };
 
+  // Generate dynamic data based on filters
+  const generateTimeSeriesData = (timePeriod: TimePeriod) => {
+    const baseData = {
+      'Monthly': {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        sales: {
+          'North Riyadh': [1.2, 1.3, 1.15, 1.4, 1.35, 1.5],
+          'South Riyadh': [0.98, 1.05, 0.92, 1.12, 1.08, 1.2],
+          'East Riyadh': [0.85, 0.9, 0.78, 0.95, 0.92, 1.0],
+          'West Riyadh': [0.75, 0.8, 0.72, 0.85, 0.82, 0.9],
+          'Central Riyadh': [0.92, 0.95, 0.88, 1.0, 0.97, 1.1]
+        },
+        prices: {
+          'North Riyadh': [4.5, 4.75, 4.65, 4.9, 4.85, 5.1],
+          'South Riyadh': [4.3, 4.55, 4.45, 4.7, 4.65, 4.9],
+          'East Riyadh': [4.2, 4.45, 4.35, 4.6, 4.55, 4.8],
+          'West Riyadh': [4.1, 4.35, 4.25, 4.5, 4.45, 4.7],
+          'Central Riyadh': [4.6, 4.85, 4.75, 5.0, 4.95, 5.2]
+        }
+      },
+      'Weekly': {
+        categories: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
+        sales: {
+          'North Riyadh': [0.3, 0.32, 0.28, 0.35, 0.33, 0.38, 0.36, 0.4],
+          'South Riyadh': [0.24, 0.26, 0.23, 0.28, 0.27, 0.30, 0.29, 0.32],
+          'East Riyadh': [0.21, 0.22, 0.19, 0.24, 0.23, 0.25, 0.24, 0.27],
+          'West Riyadh': [0.18, 0.20, 0.18, 0.21, 0.20, 0.22, 0.21, 0.23],
+          'Central Riyadh': [0.23, 0.24, 0.22, 0.25, 0.24, 0.27, 0.26, 0.29]
+        },
+        prices: {
+          'North Riyadh': [4.5, 4.6, 4.7, 4.8, 4.9, 5.0, 5.05, 5.1],
+          'South Riyadh': [4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.85, 4.9],
+          'East Riyadh': [4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.75, 4.8],
+          'West Riyadh': [4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.65, 4.7],
+          'Central Riyadh': [4.6, 4.7, 4.8, 4.9, 5.0, 5.1, 5.15, 5.2]
+        }
+      },
+      'Quarterly': {
+        categories: ['Q1', 'Q2', 'Q3', 'Q4'],
+        sales: {
+          'North Riyadh': [3.85, 4.1, 3.9, 4.3],
+          'South Riyadh': [2.95, 3.32, 3.1, 3.6],
+          'East Riyadh': [2.53, 2.87, 2.7, 3.0],
+          'West Riyadh': [2.27, 2.57, 2.4, 2.7],
+          'Central Riyadh': [2.75, 2.97, 2.8, 3.2]
+        },
+        prices: {
+          'North Riyadh': [4.6, 4.9, 4.8, 5.0],
+          'South Riyadh': [4.4, 4.7, 4.6, 4.8],
+          'East Riyadh': [4.3, 4.6, 4.5, 4.7],
+          'West Riyadh': [4.2, 4.5, 4.4, 4.6],
+          'Central Riyadh': [4.7, 5.0, 4.9, 5.1]
+        }
+      },
+      'Yearly': {
+        categories: ['2022', '2023', '2024'],
+        sales: {
+          'North Riyadh': [15.2, 16.8, 18.1],
+          'South Riyadh': [12.1, 13.4, 14.7],
+          'East Riyadh': [10.5, 11.6, 12.8],
+          'West Riyadh': [9.2, 10.1, 11.3],
+          'Central Riyadh': [11.8, 13.0, 14.2]
+        },
+        prices: {
+          'North Riyadh': [4.7, 4.9, 5.1],
+          'South Riyadh': [4.5, 4.7, 4.9],
+          'East Riyadh': [4.4, 4.6, 4.8],
+          'West Riyadh': [4.3, 4.5, 4.7],
+          'Central Riyadh': [4.8, 5.0, 5.2]
+        }
+      }
+    };
+    return baseData[timePeriod];
+  };
+
+  // Filter data based on selected zone
+  const getFilteredChartData = () => {
+    const timeData = generateTimeSeriesData(filterState.selectedTimePeriod);
+    
+    if (filterState.selectedZone === "All") {
+      return timeData;
+    }
+    
+    // Filter to show only selected zone
+    return {
+      categories: timeData.categories,
+      sales: {
+        [filterState.selectedZone]: timeData.sales[filterState.selectedZone as keyof typeof timeData.sales]
+      },
+      prices: {
+        [filterState.selectedZone]: timeData.prices[filterState.selectedZone as keyof typeof timeData.prices]
+      }
+    };
+  };
+
+  // Calculate active filter count
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (filterState.selectedZone !== "All") count++;
+    if (filterState.selectedBrand !== "All") count++;
+    if (filterState.selectedTimePeriod !== "Monthly") count++;
+    return count;
+  };
+
+  // Reset filters function
+  const resetFilters = () => {
+    setFilterState({
+      selectedZone: "All",
+      selectedBrand: "All",
+      selectedTimePeriod: "Monthly",
+      isLoading: false
+    });
+    toast.success("Filters reset to default values");
+  };
+
+  // Handle filter loading state reset
+  useEffect(() => {
+    if (filterState.isLoading) {
+      const timer = setTimeout(() => {
+        setFilterState(prev => ({ ...prev, isLoading: false }));
+        toast.success(`Updated ${filterState.selectedTimePeriod} view for ${filterState.selectedZone}`);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [filterState.isLoading, filterState.selectedTimePeriod, filterState.selectedZone]);
+
   return (
     <div className="space-y-6 pb-8">
       <div>
@@ -421,17 +565,19 @@ const HighchartsPerformance: React.FC = () => {
           <label className="text-sm font-medium text-datacue-primary">
             {t('performance.highcharts.filters.zone')}
           </label>
-          <Select value={filters.locationZones[0] || "All"} disabled>
+          <Select 
+            value={filterState.selectedZone} 
+            onValueChange={(value: Zone) => setFilterState(prev => ({ ...prev, selectedZone: value, isLoading: true }))}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="All">{t('common.all')}</SelectItem>
-              <SelectItem value="North Riyadh">{t('performance.highcharts.zones.north_riyadh')}</SelectItem>
-              <SelectItem value="South Riyadh">{t('performance.highcharts.zones.south_riyadh')}</SelectItem>
-              <SelectItem value="East Riyadh">{t('performance.highcharts.zones.east_riyadh')}</SelectItem>
-              <SelectItem value="West Riyadh">{t('performance.highcharts.zones.west_riyadh')}</SelectItem>
-              <SelectItem value="Central Riyadh">{t('performance.highcharts.zones.central_riyadh')}</SelectItem>
+              {zoneOptions.map(zone => (
+                <SelectItem key={zone} value={zone}>
+                  {zone === "All" ? t('common.all') : zone}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -440,7 +586,10 @@ const HighchartsPerformance: React.FC = () => {
           <label className="text-sm font-medium text-datacue-primary">
             {t('performance.highcharts.filters.brand')}
           </label>
-          <Select value={selectedBrand} onValueChange={(value: Brand) => setSelectedBrand(value)}>
+          <Select 
+            value={filterState.selectedBrand} 
+            onValueChange={(value: Brand) => setFilterState(prev => ({ ...prev, selectedBrand: value, isLoading: true }))}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -458,20 +607,46 @@ const HighchartsPerformance: React.FC = () => {
           <label className="text-sm font-medium text-datacue-primary">
             {t('performance.highcharts.filters.time_period')}
           </label>
-          <Select value={filters.timePeriod} disabled>
+          <Select 
+            value={filterState.selectedTimePeriod} 
+            onValueChange={(value: TimePeriod) => setFilterState(prev => ({ ...prev, selectedTimePeriod: value, isLoading: true }))}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Monthly">{t('performance.highcharts.filters.monthly')}</SelectItem>
+              {timePeriodOptions.map(period => (
+                <SelectItem key={period} value={period}>
+                  {period}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="flex items-end">
-          <Badge variant="secondary" className="h-fit">
-            {t('performance.highcharts.filters.active_filters', { count: selectedBrand !== "All" ? 1 : 0 })}
-          </Badge>
+        <div className="flex items-end space-x-2">
+          <div className="flex flex-col space-y-2">
+            <Badge variant="secondary" className="h-fit">
+              {t('performance.highcharts.filters.active_filters', { count: getActiveFilterCount() })}
+            </Badge>
+            {getActiveFilterCount() > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetFilters}
+                className="text-xs h-8"
+                disabled={filterState.isLoading}
+              >
+                Reset Filters
+              </Button>
+            )}
+          </div>
+          {filterState.isLoading && (
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <span>Updating...</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -510,7 +685,15 @@ const HighchartsPerformance: React.FC = () => {
               </Button>
             </div>
           </div>
-          <div className="h-80 bg-gray-50 border border-gray-100 rounded p-2">
+          <div className="h-80 bg-gray-50 border border-gray-100 rounded p-2 relative">
+            {filterState.isLoading && (
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 rounded">
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="text-sm text-gray-600">Loading sales data...</span>
+                </div>
+              </div>
+            )}
             <HighchartsReact
               highcharts={Highcharts}
               options={{
@@ -522,7 +705,7 @@ const HighchartsPerformance: React.FC = () => {
                 title: { text: null },
                 credits: { enabled: false },
                 xAxis: {
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                  categories: getFilteredChartData().categories,
                   gridLineWidth: 0
                 },
                 yAxis: {
@@ -566,27 +749,11 @@ const HighchartsPerformance: React.FC = () => {
                   layout: 'horizontal',
                   itemStyle: { fontSize: '12px' }
                 },
-                series: [{
-                  name: 'North Riyadh',
-                  data: [1.2, 1.3, 1.15, 1.4, 1.35, 1.5],
-                  color: '#0ea5e9'
-                }, {
-                  name: 'South Riyadh', 
-                  data: [0.98, 1.05, 0.92, 1.12, 1.08, 1.2],
-                  color: '#10b981'
-                }, {
-                  name: 'East Riyadh',
-                  data: [0.85, 0.9, 0.78, 0.95, 0.92, 1.0],
-                  color: '#f59e0b'
-                }, {
-                  name: 'West Riyadh',
-                  data: [0.75, 0.8, 0.72, 0.85, 0.82, 0.9],
-                  color: '#ef4444'
-                }, {
-                  name: 'Central Riyadh',
-                  data: [0.92, 0.95, 0.88, 1.0, 0.97, 1.1],
-                  color: '#8b5cf6'
-                }]
+                series: Object.entries(getFilteredChartData().sales).map(([zoneName, data], index) => ({
+                  name: zoneName,
+                  data: data,
+                  color: ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'][index % 5]
+                }))
               }}
             />
           </div>
@@ -625,7 +792,15 @@ const HighchartsPerformance: React.FC = () => {
               </Button>
             </div>
           </div>
-          <div className="h-80 bg-gray-50 border border-gray-100 rounded p-2">
+          <div className="h-80 bg-gray-50 border border-gray-100 rounded p-2 relative">
+            {filterState.isLoading && (
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 rounded">
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="text-sm text-gray-600">Loading price data...</span>
+                </div>
+              </div>
+            )}
             <HighchartsReact
               highcharts={Highcharts}
               options={{
@@ -637,7 +812,7 @@ const HighchartsPerformance: React.FC = () => {
                 title: { text: null },
                 credits: { enabled: false },
                 xAxis: {
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                  categories: getFilteredChartData().categories,
                   gridLineWidth: 0
                 },
                 yAxis: {
@@ -692,27 +867,11 @@ const HighchartsPerformance: React.FC = () => {
                   layout: 'horizontal',
                   itemStyle: { fontSize: '12px' }
                 },
-                series: [{
-                  name: 'North Riyadh',
-                  data: [4.5, 4.75, 4.65, 4.9, 4.85, 5.1],
-                  color: '#0ea5e9'
-                }, {
-                  name: 'South Riyadh',
-                  data: [4.3, 4.55, 4.45, 4.7, 4.65, 4.9],
-                  color: '#10b981'
-                }, {
-                  name: 'East Riyadh',
-                  data: [4.2, 4.45, 4.35, 4.6, 4.55, 4.8],
-                  color: '#f59e0b'
-                }, {
-                  name: 'West Riyadh',
-                  data: [4.1, 4.35, 4.25, 4.5, 4.45, 4.7],
-                  color: '#ef4444'
-                }, {
-                  name: 'Central Riyadh',
-                  data: [4.6, 4.85, 4.75, 5.0, 4.95, 5.2],
-                  color: '#8b5cf6'
-                }]
+                series: Object.entries(getFilteredChartData().prices).map(([zoneName, data], index) => ({
+                  name: zoneName,
+                  data: data,
+                  color: ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'][index % 5]
+                }))
               }}
             />
           </div>
